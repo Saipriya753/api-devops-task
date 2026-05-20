@@ -1,37 +1,34 @@
-const request = require('supertest');
-const app = require('../server');
+const request = require("supertest");
+const app = require("../server");
 
-describe('Task API Tests', () => {
+describe("Task Management API", () => {
 
-    test('GET / should return Task API Running', async () => {
+    test("GET / should return API running message", async () => {
 
-        const response = await request(app).get('/');
-
-        expect(response.statusCode).toBe(200);
-        expect(response.text).toBe('Task API Running');
-
-    });
-
-    test('GET /health should return OK', async () => {
-
-        const response = await request(app).get('/health');
+        const response = await request(app).get("/");
 
         expect(response.statusCode).toBe(200);
-        expect(response.text).toBe('OK');
-
+        expect(response.text).toBe("Task Management API Running");
     });
 
-    test('POST /tasks should create a task', async () => {
+    test("GET /tasks should return tasks", async () => {
+
+        const response = await request(app).get("/tasks");
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.length).toBeGreaterThan(0);
+    });
+
+    test("POST /tasks should create a new task", async () => {
 
         const response = await request(app)
-            .post('/tasks')
+            .post("/tasks")
             .send({
-                title: 'Test Task'
+                title: "Learn Jenkins"
             });
 
         expect(response.statusCode).toBe(201);
-        expect(response.body.title).toBe('Test Task');
-
+        expect(response.body.title).toBe("Learn Jenkins");
     });
 
 });

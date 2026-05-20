@@ -1,73 +1,61 @@
-const express = require('express');
+const express = require("express");
+
 const app = express();
 
 app.use(express.json());
 
-let tasks = [];
+let tasks = [
+    { id: 1, title: "Complete DevOps Assignment" }
+];
 
-// Home route
-app.get('/', (req, res) => {
-    res.send('Task API Running');
+app.get("/", (req, res) => {
+    res.send("Task Management API Running");
 });
 
-// Health endpoint
-app.get('/health', (req, res) => {
-    res.status(200).send('OK');
-});
-
-// Get all tasks
-app.get('/tasks', (req, res) => {
+app.get("/tasks", (req, res) => {
     res.json(tasks);
 });
 
-// Create task
-app.post('/tasks', (req, res) => {
+app.post("/tasks", (req, res) => {
 
-    const task = {
+    const newTask = {
         id: tasks.length + 1,
-        title: req.body.title,
-        status: req.body.status || 'Pending'
+        title: req.body.title
     };
 
-    tasks.push(task);
+    tasks.push(newTask);
 
-    res.status(201).json(task);
+    res.status(201).json(newTask);
 });
 
-// Update task
-app.put('/tasks/:id', (req, res) => {
+app.put("/tasks/:id", (req, res) => {
 
-    const id = parseInt(req.params.id);
-
-    const task = tasks.find(t => t.id === id);
+    const task = tasks.find(t => t.id == req.params.id);
 
     if (!task) {
-        return res.status(404).send('Task not found');
+        return res.status(404).send("Task not found");
     }
 
-    task.title = req.body.title || task.title;
-    task.status = req.body.status || task.status;
+    task.title = req.body.title;
 
     res.json(task);
 });
 
-// Delete task
-app.delete('/tasks/:id', (req, res) => {
+app.delete("/tasks/:id", (req, res) => {
 
-    const id = parseInt(req.params.id);
+    tasks = tasks.filter(t => t.id != req.params.id);
 
-    tasks = tasks.filter(t => t.id !== id);
-
-    res.send('Task deleted');
+    res.send("Task deleted");
 });
 
-module.exports = app;
+const PORT = 3000;
 
-// Start server
-if (require.main === module) {
+if (process.env.NODE_ENV !== "test") {
 
-    app.listen(3000, () => {
-        console.log('Server running on port 3000');
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
     });
 
 }
+
+module.exports = app;
